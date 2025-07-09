@@ -2,7 +2,7 @@
 import Button from '@/components/ui/button/Button.vue';
 import AppLayout from '@/layouts/AppLayout.vue';
 import { BreadcrumbItem } from '@/types';
-import { Head } from '@inertiajs/vue3';
+import { Head, router } from '@inertiajs/vue3';
 import { ref } from 'vue';
 
 const breadcrumbs: BreadcrumbItem[] = [
@@ -12,8 +12,16 @@ const breadcrumbs: BreadcrumbItem[] = [
     },
 ];
 const files = ref<File[]>();
-const submit = () => {};
-const uploadFiles = () => {};
+const uploadFiles = (e: any) => {
+    files.value = Array.from(e.target?.files ?? []);
+};
+const submit = () => {
+    const formData = new FormData();
+    files.value?.forEach((file, index) => {
+        formData.append(`csv-files[${index}]`, file);
+    });
+    router.post(route('csv.import'), formData);
+};
 </script>
 <template>
     <Head title="Dashboard" />
