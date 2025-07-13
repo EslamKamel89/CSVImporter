@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\CsvImportController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -13,9 +14,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/csv-upload', function () {
         return Inertia::render('csv/UploadCsv');
     })->name('csv.upload');
-    Route::post('/csv-import', function (Request $request) {
-        dd($request['csv-files']);
-    })->name('csv.import');
+    Route::post('/csv-import', [CsvImportController::class, 'import'])->name('csv.import');
 });
 
 require __DIR__ . '/settings.php';

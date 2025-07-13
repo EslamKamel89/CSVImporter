@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import Button from '@/components/ui/button/Button.vue';
 import AppLayout from '@/layouts/AppLayout.vue';
-import { BreadcrumbItem } from '@/types';
-import { Head, router } from '@inertiajs/vue3';
+import { AppPageProps, BreadcrumbItem } from '@/types';
+import { Head, router, usePage } from '@inertiajs/vue3';
 import { ref } from 'vue';
 
 const breadcrumbs: BreadcrumbItem[] = [
@@ -11,9 +11,12 @@ const breadcrumbs: BreadcrumbItem[] = [
         href: route('csv.upload'),
     },
 ];
+const page = usePage<AppPageProps>();
 const files = ref<File[]>();
-const uploadFiles = (e: any) => {
-    files.value = Array.from(e.target?.files ?? []);
+const uploadFiles = (e: Event) => {
+    const target = e.target as HTMLInputElement;
+    console.dir(e);
+    files.value = Array.from(target?.files ?? []);
 };
 const submit = () => {
     const formData = new FormData();
@@ -27,20 +30,22 @@ const submit = () => {
     <Head title="Dashboard" />
     <AppLayout :breadcrumbs="breadcrumbs">
         <div class="p-6">
-            <h1 class="mb-4 text-2xl font-bold">Csv Importer</h1>
-            <form @submit.prevent="submit" enctype="multipart/form-data" class="flex flex-col space-y-3">
+            <h1 class="mb-4 text-2xl font-bold">CSV Importer</h1>
+            <form @submit.prevent="submit" enctype="multipart/form-data" class="flex flex-col">
                 <div class="grid w-full items-center gap-1.5">
-                    <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white" for="csv">Csv</label>
+                    <label class="mb-2 block text-sm font-medium text-gray-900 dark:text-white" for="csv">Csv</label>
                     <input
-                        class="block w-full p-2 mb-5 text-xs text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 focus:outline-none dark:border-gray-600 dark:bg-gray-700 dark:text-gray-400 dark:placeholder-gray-400"
+                        class="block w-full cursor-pointer rounded-lg border border-gray-300 bg-gray-50 p-2 text-xs text-gray-900 focus:outline-none dark:border-gray-600 dark:bg-gray-700 dark:text-gray-400 dark:placeholder-gray-400"
                         id="csv"
                         type="file"
                         multiple
                         accept=".csv"
                         @change="uploadFiles"
                     />
+                    <div class="text-xs font-thin text-red-500">{{ page.props.errors['csv-files'] }}</div>
+                    <div class="text-xs font-thin text-red-500" v-for="(file, i) in files" :key="i">{{ page.props.errors[`csv-files.${i}`] }}</div>
                 </div>
-                <Button type="submit">Upload</Button>
+                <Button type="submit" class="mt-5 w-fit">Upload</Button>
             </form>
         </div>
     </AppLayout>
