@@ -2,6 +2,7 @@
 
 namespace App\Jobs;
 
+use Illuminate\Bus\Batchable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
 use Illuminate\Queue\InteractsWithQueue;
@@ -9,12 +10,13 @@ use Illuminate\Queue\SerializesModels;
 use Storage;
 
 class ProcessCsvRow implements ShouldQueue {
-    use Queueable, SerializesModels, InteractsWithQueue;
+    use Queueable, SerializesModels, InteractsWithQueue, Batchable;
 
     /**
      * Create a new job instance.
      */
     public function __construct(public int $rowNumber, public array $data, public string $fileName) {
+        // info('ProcessCsvRow', [$this->rowNumber, $this->data, $this->fileName]);
     }
 
     /**
