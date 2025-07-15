@@ -2,11 +2,13 @@
 
 namespace App\Jobs;
 
+use App\Events\CsvRowProcessed;
 use Illuminate\Bus\Batchable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\Event;
 use Storage;
 
 class ProcessCsvRow implements ShouldQueue {
@@ -24,7 +26,10 @@ class ProcessCsvRow implements ShouldQueue {
      */
     public function handle(): void {
         info("📦 Processing row #{$this->rowNumber} from {$this->fileName}", $this->data);
-        sleep(2);
+        sleep(1);
+        Event::dispatch(
+            new CsvRowProcessed($this->fileName, $this->rowNumber, $this->data)
+        );
     }
     public function failed(\Throwable $exception) {
         info("💥 Failed to process row #{$this->rowNumber}: " . $exception->getMessage());
