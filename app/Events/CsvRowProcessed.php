@@ -41,4 +41,7 @@ class CsvRowProcessed implements ShouldBroadcastNow {
             new Channel('csv-progress'),
         ];
     }
+    public function broadcastAs(): string|null {
+        return 'CsvRowProcessed';
+    }
 }
