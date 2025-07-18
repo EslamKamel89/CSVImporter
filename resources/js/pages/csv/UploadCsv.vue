@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import Session from '@/components/Shared/Session.vue';
 import Button from '@/components/ui/button/Button.vue';
 import AppLayout from '@/layouts/AppLayout.vue';
 import { AppPageProps, BreadcrumbItem } from '@/types';
@@ -38,25 +39,12 @@ onMounted(() => {
     <AppLayout :breadcrumbs="breadcrumbs">
         <div class="p-6">
             <h1 class="mb-4 text-2xl font-bold">CSV Importer</h1>
-            <div
-                v-if="page.props.session?.error"
-                class="p-4 mb-4 text-sm text-red-800 rounded-lg bg-red-50 dark:bg-gray-800 dark:text-red-400"
-                role="alert"
-            >
-                <span class="font-medium">Danger alert!</span> {{ page.props.session?.error }}
-            </div>
-            <div
-                v-if="page.props?.session?.success"
-                class="p-4 mb-4 text-sm text-green-800 rounded-lg bg-green-50 dark:bg-gray-800 dark:text-green-400"
-                role="alert"
-            >
-                <span class="font-medium">Success alert!</span> {{ page.props?.session?.success }}
-            </div>
+            <Session />
             <form @submit.prevent="submit" enctype="multipart/form-data" class="flex flex-col">
                 <div class="grid w-full items-center gap-1.5">
-                    <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white" for="csv">Csv</label>
+                    <label class="mb-2 block text-sm font-medium text-gray-900 dark:text-white" for="csv">Csv</label>
                     <input
-                        class="block w-full p-2 text-xs text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 focus:outline-none dark:border-gray-600 dark:bg-gray-700 dark:text-gray-400 dark:placeholder-gray-400"
+                        class="block w-full cursor-pointer rounded-lg border border-gray-300 bg-gray-50 p-2 text-xs text-gray-900 focus:outline-none dark:border-gray-600 dark:bg-gray-700 dark:text-gray-400 dark:placeholder-gray-400"
                         id="csv"
                         type="file"
                         multiple
