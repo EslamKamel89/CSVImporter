@@ -37,6 +37,9 @@ class CsvImportController extends Controller {
                 new NotifyUserOfImportCompletion('admin@gmail.com'),
             ])->dispatch();
         }
-        return redirect()->back()->with(['success' => 'File Saved Successfully and being processed in the background']);
+        return redirect()->back()->with([
+            'success' => 'File Saved Successfully and being processed in the background',
+            'data' => ['total' => count($jobs)]
+        ]);
     }
 }
