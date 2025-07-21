@@ -17,10 +17,6 @@ watch(
     },
 );
 onMounted(() => {
-    const batchCompleted = useEchoPublic('csv-progress', '.BatchCompleted', (e) => {
-        console.log(e);
-    });
-    batchCompleted.listen();
     const csvRowProccessed = useEchoPublic('csv-progress', '.CsvRowProcessed', (e: { row: number }) => {
         progress.value.processed = e.row;
         if (progress.value.total !== 0) {
@@ -29,6 +25,13 @@ onMounted(() => {
     });
     csvRowProccessed.listen();
     progress.value.total = page.props?.session?.data?.total ?? 0;
+    const batchCompleted = useEchoPublic('csv-progress', '.BatchCompleted', (e: { status: 'success' | 'failed' }) => {
+        if (e.status == 'success') {
+        }
+        if (e.status == 'failed') {
+        }
+    });
+    batchCompleted.listen();
 });
 </script>
 <template>

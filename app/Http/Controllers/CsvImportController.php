@@ -38,11 +38,11 @@ class CsvImportController extends Controller {
                 new NotifyUserOfImportCompletion('admin@gmail.com'),
             ])
                 ->then(function () {
-                    BatchCompleted::dispatch('Success');
+                    BatchCompleted::dispatch('success');
                     info('success');
                 })
                 ->catch(function () {
-                    BatchCompleted::dispatch('Failed');
+                    BatchCompleted::dispatch('failed');
                     info('Failed');
                 })
                 ->dispatch();
