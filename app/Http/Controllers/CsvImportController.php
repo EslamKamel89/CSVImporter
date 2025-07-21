@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\BatchCompleted;
 use App\Jobs\NotifyUserOfImportCompletion;
 use App\Jobs\ProcessCsvRow;
 use App\Jobs\ValidateCsvFile;
@@ -35,7 +36,16 @@ class CsvImportController extends Controller {
                 new ValidateCsvFile($path),
                 ...$jobs,
                 new NotifyUserOfImportCompletion('admin@gmail.com'),
-            ])->dispatch();
+            ])
+                ->then(function () {
+                    BatchCompleted::dispatch('Success');
+                    info('success');
+                })
+                ->catch(function () {
+                    BatchCompleted::dispatch('Failed');
+                    info('Failed');
+                })
+                ->dispatch();
         }
         return redirect()->back()->with([
             'success' => 'File Saved Successfully and being processed in the background',
