@@ -3,6 +3,7 @@ import { AppPageProps } from '@/types';
 import { usePage } from '@inertiajs/vue3';
 import { useEchoPublic } from '@laravel/echo-vue';
 import { onMounted, ref, watch } from 'vue';
+import { toast } from 'vue-sonner';
 
 const page = usePage<AppPageProps>();
 const progress = ref({
@@ -27,8 +28,16 @@ onMounted(() => {
     progress.value.total = page.props?.session?.data?.total ?? 0;
     const batchCompleted = useEchoPublic('csv-progress', '.BatchCompleted', (e: { status: 'success' | 'failed' }) => {
         if (e.status == 'success') {
+            toast('Success', {
+                description: 'All your files is uploaded successfully',
+                style: { backgroundColor: 'green', color: 'white', padding: '5px', border: '1px solid', borderRadius: '10px' },
+            });
         }
         if (e.status == 'failed') {
+            toast('Failed', {
+                description: 'Sorry, something went wrong. please try again later',
+                style: { backgroundColor: 'red', color: 'white', padding: '5px', border: '1px solid', borderRadius: '10px' },
+            });
         }
     });
     batchCompleted.listen();
