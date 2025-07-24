@@ -19,9 +19,9 @@ watch(
 );
 onMounted(() => {
     const csvRowProccessed = useEchoPublic('csv-progress', '.CsvRowProcessed', (e: { row: number }) => {
-        progress.value.processed = e.row;
+        progress.value.processed++;
         if (progress.value.total !== 0) {
-            progress.value.percent = Math.round((e.row / progress.value.total) * 100);
+            progress.value.percent = Math.round((progress.value.processed / progress.value.total) * 100);
         }
     });
     csvRowProccessed.listen();
@@ -45,16 +45,16 @@ onMounted(() => {
 </script>
 <template>
     <div>
-        <div class="relative w-full mx-5 bg-gray-200 rounded h-9">
+        <div class="relative mx-5 h-9 w-full rounded bg-gray-200">
             <div
-                class="bg-blue-300 h-9"
+                class="h-9 bg-blue-300"
                 :style="{
                     width: `${progress.percent}%`,
                 }"
             ></div>
-            <div class="absolute inset-0 flex items-center justify-center w-full h-full font-bold text-black">{{ progress.percent }}%</div>
+            <div class="absolute inset-0 flex h-full w-full items-center justify-center font-bold text-black">{{ progress.percent }}%</div>
         </div>
-        <ul class="flex w-full mx-5 space-x-5">
+        <ul class="mx-5 flex w-full space-x-5">
             <li>total: {{ progress.total }}</li>
             <li>processed: {{ progress.processed }}</li>
         </ul>

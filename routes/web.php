@@ -16,6 +16,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         return Inertia::render('csv/UploadCsv');
     })->name('csv.upload');
     Route::post('/csv-import', [CsvImportController::class, 'import'])->name('csv.import');
+    // Route::get('/add-more-files', [CsvImportController::class, 'addMoreFiles']);
 });
 
 
