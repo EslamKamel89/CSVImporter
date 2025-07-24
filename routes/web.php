@@ -17,9 +17,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     })->name('csv.upload');
     Route::post('/csv-import', [CsvImportController::class, 'import'])->name('csv.import');
 });
-// Route::get('/test', function () {
-//     CsvRowProcessed::dispatch('Test file', 1, ['message' => 'hello world']);
-// });
+
 
 require __DIR__ . '/settings.php';
 require __DIR__ . '/auth.php';

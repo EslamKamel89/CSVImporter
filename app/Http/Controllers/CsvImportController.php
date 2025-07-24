@@ -16,40 +16,40 @@ class CsvImportController extends Controller {
             'csv-files' => 'required|array',
             'csv-files.*' => 'mimes:csv,txt'
         ]);
+        $jobs = [];
+        $rowCount = 0;
         /** @var \Illuminate\Http\UploadedFile $file */
         foreach ($request['csv-files'] as $file) {
             $path = $file->store('csv-uploads', 'public');
-            $jobs = [];
             $handle = fopen(Storage::disk('public')->path($path), 'r');
             $headers = fgetcsv($handle);
             $row = fgetcsv($handle);
+            $jobs[] = new ValidateCsvFile($path);
+
             while ($row !== false) {
                 $jobs[] = new ProcessCsvRow(
-                    count($jobs) + 1,
+                    ++$rowCount,
                     array_combine($headers, $row),
                     $path
                 );
                 $row = fgetcsv($handle);
             }
             fclose($handle);
-            Bus::batch([
-                new ValidateCsvFile($path),
-                ...$jobs,
-                new NotifyUserOfImportCompletion('admin@gmail.com'),
-            ])
-                ->then(function () {
-                    BatchCompleted::dispatch('success');
-                    info('success');
-                })
-                ->catch(function () {
-                    BatchCompleted::dispatch('failed');
-                    info('Failed');
-                })
-                ->dispatch();
+            $jobs[] =  new NotifyUserOfImportCompletion('admin@gmail.com');
         }
+        $batch = Bus::batch($jobs)
+            ->then(function () {
+                BatchCompleted::dispatch('success');
+                info('success');
+            })
+            ->catch(function () {
+                BatchCompleted::dispatch('failed');
+                info('Failed');
+            })
+            ->dispatch();
         return redirect()->back()->with([
             'success' => 'File Saved Successfully and being processed in the background',
-            'data' => ['total' => count($jobs)]
+            'data' => ['total' => $rowCount]
         ]);
     }
 }
