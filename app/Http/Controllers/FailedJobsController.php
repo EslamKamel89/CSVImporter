@@ -15,8 +15,9 @@ class FailedJobsController extends Controller {
         $jobs =  $failedJobs->map(function ($job) {
             $payload = json_decode($job->payload, true);
             // dd($payload);
+            // dd($job);
             return [
-                'id' => $job->id,
+                'id' => $payload["uuid"],
                 'queue' => $job->queue,
                 'exception' => $job->exception,
                 'failed_at' => $job->failed_at,
@@ -49,6 +50,8 @@ class FailedJobsController extends Controller {
     }
     public function retry($id) {
         try {
+
+            // dd($id);
             Artisan::call('queue:retry', ['id' => $id]);
             return back()->with('success', 'Job have been added successfully to the queue');
         } catch (\Throwable $th) {

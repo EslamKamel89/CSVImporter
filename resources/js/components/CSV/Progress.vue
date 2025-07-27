@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { AppPageProps } from '@/types';
+import showToast from '@/utils/toast';
 import { usePage } from '@inertiajs/vue3';
 import { useEchoPublic } from '@laravel/echo-vue';
 import { onMounted, ref, watch } from 'vue';
-import { toast } from 'vue-sonner';
 
 const page = usePage<AppPageProps>();
 const progress = ref({
@@ -28,16 +28,10 @@ onMounted(() => {
     progress.value.total = page.props?.session?.data?.total ?? 0;
     const batchCompleted = useEchoPublic('csv-progress', '.BatchCompleted', (e: { status: 'success' | 'failed' }) => {
         if (e.status == 'success') {
-            toast('Success', {
-                description: 'All your files is uploaded successfully',
-                style: { backgroundColor: 'green', color: 'white', padding: '5px', border: '1px solid', borderRadius: '10px' },
-            });
+            showToast({ isSuccess: true, description: 'All your files is uploaded successfully' });
         }
         if (e.status == 'failed') {
-            toast('Failed', {
-                description: 'Sorry, something went wrong. please try again later',
-                style: { backgroundColor: 'red', color: 'white', padding: '5px', border: '1px solid', borderRadius: '10px' },
-            });
+            showToast({ isSuccess: false, description: 'Sorry, something went wrong. please try again later' });
         }
     });
     batchCompleted.listen();
@@ -45,16 +39,16 @@ onMounted(() => {
 </script>
 <template>
     <div>
-        <div class="relative mx-5 h-9 w-full rounded bg-gray-200">
+        <div class="relative w-full mx-5 bg-gray-200 rounded h-9">
             <div
-                class="h-9 bg-blue-300"
+                class="bg-blue-300 h-9"
                 :style="{
                     width: `${progress.percent}%`,
                 }"
             ></div>
-            <div class="absolute inset-0 flex h-full w-full items-center justify-center font-bold text-black">{{ progress.percent }}%</div>
+            <div class="absolute inset-0 flex items-center justify-center w-full h-full font-bold text-black">{{ progress.percent }}%</div>
         </div>
-        <ul class="mx-5 flex w-full space-x-5">
+        <ul class="flex w-full mx-5 space-x-5">
             <li>total: {{ progress.total }}</li>
             <li>processed: {{ progress.processed }}</li>
         </ul>
