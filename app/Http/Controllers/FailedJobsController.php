@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Artisan;
 
 class FailedJobsController extends Controller {
     public function index() {
@@ -44,6 +45,14 @@ class FailedJobsController extends Controller {
             return get_class($job);
         } catch (\Exception $e) {
             return 'Failed to unserialize job data: ' . $e->getMessage();
+        }
+    }
+    public function retry($id) {
+        try {
+            Artisan::call('queue:retry', ['id' => $id]);
+            return back()->with('success', 'Job have been added successfully to the queue');
+        } catch (\Throwable $th) {
+            return back()->with('error', "failed to add the job with id: {$id} to the queue: {$th->getMessage()}");
         }
     }
 }
