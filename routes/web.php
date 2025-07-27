@@ -18,6 +18,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     })->name('csv.upload');
     Route::post('/csv-import', [CsvImportController::class, 'import'])->name('csv.import');
     Route::get('/failed-jobs', [FailedJobsController::class, 'index'])->name('failed-jobs.index');
+    Route::post('/failed-jobs/{id}/retry', [FailedJobsController::class, 'retry'])->name('failed-jobs.retry');
 });
 
 
