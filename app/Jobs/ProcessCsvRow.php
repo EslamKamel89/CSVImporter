@@ -27,10 +27,11 @@ class ProcessCsvRow implements ShouldQueue {
     public function handle(): void {
         info("📦 Processing row #{$this->rowNumber} from {$this->fileName}", $this->data);
         sleep(1);
-        // Event::dispatch(
-        //     new CsvRowProcessed($this->fileName, $this->rowNumber, $this->data)
-        // );
-        CsvRowProcessed::dispatch($this->fileName, $this->rowNumber, $this->data,);
+        if (fake()->boolean(50)) {
+            CsvRowProcessed::dispatch($this->fileName, $this->rowNumber, $this->data,);
+        } else {
+            throw new \Exception("Sorry unknown error occured when processing the csv file {$this->fileName} at row: {$this->rowNumber}");
+        }
     }
     public function failed(\Throwable $exception) {
         info("💥 Failed to process row #{$this->rowNumber}: " . $exception->getMessage());

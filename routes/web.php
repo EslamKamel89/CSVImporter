@@ -2,6 +2,7 @@
 
 use App\Events\CsvRowProcessed;
 use App\Http\Controllers\CsvImportController;
+use App\Http\Controllers\FailedJobsController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -16,7 +17,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         return Inertia::render('csv/UploadCsv');
     })->name('csv.upload');
     Route::post('/csv-import', [CsvImportController::class, 'import'])->name('csv.import');
-    // Route::get('/add-more-files', [CsvImportController::class, 'addMoreFiles']);
+    Route::get('/failed-jobs', [FailedJobsController::class, 'index'])->name('failed-jobs.index');
 });
 
 
