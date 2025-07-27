@@ -1,9 +1,11 @@
 <script setup lang="ts">
+import { Button } from '@/components/ui/button';
 import { Table, TableBody, TableCaption, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import AppLayout from '@/layouts/AppLayout.vue';
 import { type BreadcrumbItem } from '@/types';
-import { Head } from '@inertiajs/vue3';
-
+import { Head, router } from '@inertiajs/vue3';
+import { Pen } from 'lucide-vue-next';
 const breadcrumbs: BreadcrumbItem[] = [
     {
         title: 'Failed Jobs',
@@ -20,32 +22,55 @@ defineProps<{
         data: string;
     }[];
 }>();
+const retry = async (id: number) => {
+    router.post(
+        route('failed-jobs.retry', { id }),
+        {},
+        {
+            onSuccess: () => {},
+            onError: () => {},
+        },
+    );
+};
 </script>
 <template>
     <Head title="Failed Jobs" />
 
     <AppLayout :breadcrumbs="breadcrumbs">
-        <div class="flex flex-col flex-1 h-full gap-4 p-4 overflow-x-auto rounded-xl">
-            <h2>Failed jobs</h2>
+        <div class="flex h-full flex-1 flex-col gap-4 overflow-x-auto rounded-xl p-4">
             <Table>
-                <TableCaption>A list of your recent invoices.</TableCaption>
+                <TableCaption>A list of your Failed jobs.</TableCaption>
                 <TableHeader>
                     <TableRow>
-                        <TableHead class="w-[100px]"> Job Name </TableHead>
+                        <TableHead class=""> Job Name </TableHead>
                         <TableHead>Queue</TableHead>
-                        <TableHead class="w-[100px]">exception</TableHead>
-                        <TableHead class="text-right"> Failed at </TableHead>
+                        <TableHead class="">exception</TableHead>
+                        <TableHead class="w-fit"> Failed at </TableHead>
+                        <TableHead class="text-right"> Actions </TableHead>
                     </TableRow>
                 </TableHeader>
                 <TableBody>
                     <TableRow v-for="job in jobs" :key="job.id">
-                        <TableCell class="font-medium">
+                        <TableCell class="w-fit font-medium">
                             {{ job.job_name }}
                         </TableCell>
                         <TableCell>{{ job.queue }}</TableCell>
-                        <TableCell class="line-clamp-4 max-w-[200px] text-ellipsis">{{ job.exception }}</TableCell>
-                        <TableCell class="text-right">
+
+                        <TableCell class="line-clamp-4 max-w-[200px]">
+                            <TooltipProvider>
+                                <Tooltip>
+                                    <TooltipTrigger class="text-ellipsis">{{ job.exception }}</TooltipTrigger>
+                                    <TooltipContent class="m-4 line-clamp-none text-wrap">
+                                        <p class="m-4 w-[500px]">{{ job.exception }}</p>
+                                    </TooltipContent>
+                                </Tooltip>
+                            </TooltipProvider>
+                        </TableCell>
+                        <TableCell class="ps-4">
                             {{ job.failed_at }}
+                        </TableCell>
+                        <TableCell class="text-right">
+                            <Button @click="retry(job.id)" variant="outline"><Pen /></Button>
                         </TableCell>
                     </TableRow>
                 </TableBody>
